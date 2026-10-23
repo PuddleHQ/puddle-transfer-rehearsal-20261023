@@ -1,0 +1,28 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            crate/target
+          key: rehearsal-${{ runner.os }}-${{ hashFiles('crate/Cargo.lock') }}
+      - name: build (timed)
+        working-directory: crate
+        run: |
+          echo "cache-hit=${{ steps.cache.outputs.cache-hit }}"
+          s=$(date +%s)
+          cargo test
+          echo "BUILD_SECONDS=$(( $(date +%s) - s )) hit=${{ steps.cache.outputs.cache-hit }}"
