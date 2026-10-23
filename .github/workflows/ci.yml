@@ -19,6 +19,8 @@ jobs:
             ~/.cargo/registry
             crate/target
           key: rehearsal-${{ runner.os }}-${{ hashFiles('crate/Cargo.lock') }}
+      - name: noop
+        run: echo unchanged-workflow-edit
       - name: build (timed)
         working-directory: crate
         run: |
